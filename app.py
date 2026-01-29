@@ -61,6 +61,11 @@ def health_check():
         "topics": ["machine learning", "web development", "data science", "cloud computing"]
     })
 
+@app.route('/health-ui', methods=['GET'])
+def health_ui():
+    """Health check UI page"""
+    return render_template('health.html')
+
 @app.route('/ask', methods=['POST'])
 def ask_question():
     """Main endpoint for asking questions"""
