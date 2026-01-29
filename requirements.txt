@@ -1,0 +1,14 @@
+# Core
+langchain==0.2.16
+langchain-community==0.2.16
+faiss-cpu==1.8.0.post1
+tiktoken==0.7.0
+python-dotenv==1.0.1
+
+# Local embeddings
+sentence-transformers==3.0.1
+
+# Document loaders & parsing
+pypdf==4.3.1
+unstructured==0.15.0
+markdown==3.6
