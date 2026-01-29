@@ -30,9 +30,51 @@
             font-size: 1.1em;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 20px;
+        }
+        .status-bar {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.07);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .status-text {
+            color: #27ae60;
+            font-weight: 500;
+        }
+        .health-link {
+            color: #27ae60;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .health-link:hover {
+            background: #f8f9fa;
         }
         .welcome-section {
             background: white;
@@ -48,37 +90,48 @@
             font-weight: 400;
         }
         .topics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+            display: flex;
+            gap: 15px;
+            padding: 10px 20px;
+            margin: 20px 0;
+            justify-content: center;
+            overflow-x: auto;
         }
         .topic-card {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
+            padding: 15px 20px;
+            border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
             border: 1px solid #e1e8ed;
+            cursor: pointer;
+            min-width: 180px;
+            max-width: 220px;
+            flex: 1;
+            text-align: center;
         }
         .topic-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border-color: #667eea;
         }
         .topic-card h3 {
             color: #2c3e50;
-            margin: 0 0 10px 0;
-            font-size: 1.3em;
+            margin: 0 0 8px 0;
+            font-size: 1.1em;
+            font-weight: 600;
         }
         .topic-card p {
             color: #7f8c8d;
-            margin: 0 0 15px 0;
-            line-height: 1.5;
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            line-height: 1.4;
         }
         .topic-examples {
-            font-size: 0.9em;
+            font-size: 12px;
             color: #95a5a6;
             font-style: italic;
+            margin: 0;
         }
         .question-section {
             background: white;
@@ -126,20 +179,30 @@
             transition: all 0.3s;
         }
         .ask-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
         .ask-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        .ask-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
         .clear-btn {
-            background: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
         }
         .clear-btn:hover {
-            background: #c0392b;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+        }
+        .clear-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
         }
         .health-btn {
             background: #27ae60;
@@ -223,54 +286,88 @@
             border-radius: 10px;
             border-left: 4px solid #e74c3c;
         }
-        .previous-responses {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #e1e8ed;
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 30% 70%;
+            gap: 20px;
+            margin: 20px 0;
         }
-        .previous-responses h3 {
+        .recent-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            height: fit-content;
+        }
+        .recent-panel h3 {
             color: #2c3e50;
             margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
         }
-        .response-history {
-            max-height: 300px;
-            overflow-y: auto;
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
         .history-item {
             background: #f8f9fa;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
             border-left: 3px solid #95a5a6;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         .history-item:hover {
             background: #e9ecef;
+            border-left-color: #667eea;
+            transform: translateX(2px);
         }
         .history-question {
-            font-weight: bold;
+            font-weight: 500;
             color: #2c3e50;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            font-size: 14px;
         }
         .history-preview {
             color: #7f8c8d;
-            font-size: 14px;
+            font-size: 12px;
+            line-height: 1.3;
         }
         .history-timestamp {
             color: #95a5a6;
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 10px;
+            margin-top: 4px;
         }
         @media (max-width: 768px) {
+            .chat-layout {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .recent-panel {
+                height: auto;
+            }
+            .topics-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .topic-card {
+                width: 100%;
+                max-width: 300px;
+                flex: none;
+            }
+            .status-bar {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
             .input-group {
                 flex-direction: column;
             }
             .button-group {
                 flex-direction: column;
-            }
-            .topics-grid {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -282,65 +379,81 @@
     </div>
 
     <div class="container">
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span class="status-text">System Online</span>
+            </div>
+            <a href="/health-ui" class="health-link">View Details →</a>
+        </div>
+
         <div class="welcome-section">
             <h2>Welcome! I'm here to help you learn about technology</h2>
             <p>Ask me anything about machine learning, web development, data science, or cloud computing. I'll provide clear explanations with references to help you understand better.</p>
         </div>
 
         <div class="topics-grid">
-            <div class="topic-card">
+            <div class="topic-card" onclick="quickAsk('What is machine learning?')">
                 <h3>🤖 Machine Learning</h3>
-                <p>Learn about AI algorithms, neural networks, and how machines learn from data.</p>
-                <div class="topic-examples">"What is supervised learning?"</div>
+                <p>AI algorithms, neural networks, training</p>
+                <div class="topic-examples">Click to ask!</div>
             </div>
-            <div class="topic-card">
+            <div class="topic-card" onclick="quickAsk('How does React work?')">
                 <h3>💻 Web Development</h3>
-                <p>Discover how websites and web applications are built using modern technologies.</p>
-                <div class="topic-examples">"How does React work?"</div>
+                <p>Frontend, backend, frameworks, APIs</p>
+                <div class="topic-examples">Click to ask!</div>
             </div>
-            <div class="topic-card">
+            <div class="topic-card" onclick="quickAsk('What is data cleaning?')">
                 <h3>📊 Data Science</h3>
-                <p>Explore data analysis, visualization, and statistical methods for insights.</p>
-                <div class="topic-examples">"What is data cleaning?"</div>
+                <p>Analysis, visualization, statistics</p>
+                <div class="topic-examples">Click to ask!</div>
             </div>
-            <div class="topic-card">
+            <div class="topic-card" onclick="quickAsk('What is serverless?')">
                 <h3>☁️ Cloud Computing</h3>
-                <p>Understand cloud platforms, deployment, and scalable infrastructure.</p>
-                <div class="topic-examples">"What is serverless?"</div>
+                <p>AWS, Azure, deployment, scalability</p>
+                <div class="topic-examples">Click to ask!</div>
             </div>
         </div>
 
-        <div class="question-section">
-            <h2>💭 Ask Your Question</h2>
-            <div class="input-group">
-                <textarea id="question" placeholder="e.g., What is machine learning? How does React work? What is cloud computing?"></textarea>
+        <div class="chat-layout">
+            <div class="recent-panel">
+                <h3>📚 Recent</h3>
+                <div class="response-history" id="response-history">
+                    <p style="color: #95a5a6; font-style: italic; margin: 0;">Your question history will appear here</p>
+                </div>
             </div>
-            <div class="button-group">
-                <button class="ask-btn" onclick="askQuestion()" id="ask-btn">🚀 Ask Question</button>
-                <button class="clear-btn" onclick="clearQuestion()">🗑️ Clear</button>
-                <a href="/health-ui" class="health-btn">🔍 System Health</a>
-            </div>
-        </div>
 
-        <div class="response-section" id="response-section">
-            <div class="response-header">
-                <h2>📝 Answer</h2>
-            </div>
-            <div id="response-content">
-                <!-- Response will appear here -->
-            </div>
-        </div>
+            <div class="chat-panel">
+                <div class="question-section">
+                    <h2>💭 Ask Your Question</h2>
+                    <div class="input-group">
+                        <textarea id="question" placeholder="e.g., What is machine learning? How does React work? What is cloud computing?"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="ask-btn" onclick="askQuestion()" id="ask-btn">🚀 Ask Question</button>
+                        <button class="clear-btn" onclick="clearQuestion()">🗑️ Clear</button>
+                    </div>
+                </div>
 
-        <div class="previous-responses" id="previous-responses" style="display: none;">
-            <h3>📚 Previous Questions</h3>
-            <div class="response-history" id="response-history">
-                <!-- Previous responses will appear here -->
+                <div class="response-section" id="response-section">
+                    <div class="response-header">
+                        <h2>📝 Answer</h2>
+                    </div>
+                    <div id="response-content">
+                        <!-- Response will appear here -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         let responseHistory = [];
+
+        function quickAsk(question) {
+            document.getElementById('question').value = question;
+            askQuestion();
+        }
 
         function clearQuestion() {
             document.getElementById('question').value = '';
@@ -349,7 +462,7 @@
 
         function addToHistory(question, answer, questionType, sources) {
             const timestamp = new Date().toLocaleString();
-            const preview = answer.length > 100 ? answer.substring(0, 100) + '...' : answer;
+            const preview = answer.length > 80 ? answer.substring(0, 80) + '...' : answer;
 
             responseHistory.unshift({
                 question,
@@ -370,14 +483,11 @@
 
         function updateHistoryDisplay() {
             const historyContainer = document.getElementById('response-history');
-            const previousSection = document.getElementById('previous-responses');
 
             if (responseHistory.length === 0) {
-                previousSection.style.display = 'none';
+                historyContainer.innerHTML = '<p style="color: #95a5a6; font-style: italic; margin: 0;">Your question history will appear here</p>';
                 return;
             }
-
-            previousSection.style.display = 'block';
 
             historyContainer.innerHTML = responseHistory.map((item, index) => `
                 <div class="history-item" onclick="loadFromHistory(${index})">
