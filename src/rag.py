@@ -7,6 +7,7 @@ from langchain.embeddings.base import Embeddings
 from langchain_core.documents import Document
 
 from utils import get_env, sanitize_text
+from general_responses import get_general_response
 
 load_dotenv()
 STORE_DIR = Path("store/faiss")
@@ -35,11 +36,58 @@ def get_llm():
         # (So LOCAL mode still returns useful text without a heavy model.)
         return None
 
+def is_technical_question(query: str) -> bool:
+    """Check if the question is about our technical knowledge domains"""
+    technical_keywords = [
+        # Machine Learning
+        'machine learning', 'ml', 'artificial intelligence', 'ai', 'neural network',
+        'deep learning', 'supervised learning', 'unsupervised learning', 'reinforcement learning',
+        'algorithm', 'model', 'training', 'prediction', 'classification', 'regression',
+        'clustering', 'overfitting', 'underfitting', 'feature engineering',
+
+        # Web Development
+        'web development', 'html', 'css', 'javascript', 'frontend', 'backend',
+        'react', 'vue', 'angular', 'node.js', 'api', 'database', 'server',
+        'website', 'web app', 'framework', 'library', 'programming',
+
+        # Data Science
+        'data science', 'data analysis', 'statistics', 'pandas', 'numpy', 'matplotlib',
+        'jupyter', 'data visualization', 'data cleaning', 'data preprocessing',
+        'big data', 'analytics', 'business intelligence',
+
+        # Cloud Computing
+        'cloud', 'aws', 'azure', 'google cloud', 'gcp', 'docker', 'kubernetes',
+        'serverless', 'infrastructure', 'deployment', 'scalability', 'microservices',
+
+        # General Tech
+        'software', 'development', 'coding', 'programming', 'computer science',
+        'technology', 'tech', 'developer', 'engineer'
+    ]
+
+    query_lower = query.lower()
+    return any(keyword in query_lower for keyword in technical_keywords)
+
 def synthesize_answer(query: str, docs: list[Document], llm):
     if llm is None:
-        # Concatenate top docs as a minimal answer
-        combined = " ".join([d.page_content for d in docs])[:1200]
-        return f"(LOCAL MODE) Top sources say: {sanitize_text(combined)}"
+        # Filter out irrelevant chunks for LOCAL MODE
+        relevant_docs = []
+        query_words = set(query.lower().split())
+
+        for doc in docs:
+            content_lower = doc.page_content.lower()
+            # Check if query words appear in the content
+            if any(word in content_lower for word in query_words if len(word) > 2):
+                relevant_docs.append(doc)
+
+        if not relevant_docs:
+            return get_general_response(query)
+
+        # Use only relevant docs, limit to top 2-3
+        relevant_docs = relevant_docs[:3]
+
+        # Create a more focused summary
+        combined = " ".join([d.page_content for d in relevant_docs])[:1000]
+        return f"Based on my knowledge: {sanitize_text(combined)}"
     else:
         from langchain.prompts import PromptTemplate
         from langchain.chains import LLMChain
@@ -93,16 +141,19 @@ def main():
             print(f"{'='*60}")
             print(f"\nANSWER:")
             print(sanitize_text(answer))
-            print(f"\n{'='*60}")
-            print(f"SOURCES ({len(docs)} retrieved):")
-            for i, d in enumerate(docs, 1):
-                meta = d.metadata or {}
-                source = meta.get("source", "unknown")
-                page = meta.get("page", "N/A")
-                print(f"{i}. {Path(source).name} (page {page})")
-                # Show first 100 chars of content
-                preview = d.page_content[:100].replace('\n', ' ')
-                print(f"   Preview: {preview}...")
+
+            # Only show sources for technical questions
+            if is_technical_question(question):
+                print(f"\n{'='*60}")
+                print(f"SOURCES ({len(docs)} retrieved):")
+                for i, d in enumerate(docs, 1):
+                    meta = d.metadata or {}
+                    source = meta.get("source", "unknown")
+                    page = meta.get("page", "N/A")
+                    print(f"{i}. {Path(source).name} (page {page})")
+                    # Show first 100 chars of content
+                    preview = d.page_content[:100].replace('\n', ' ')
+                    print(f"   Preview: {preview}...")
             print(f"{'='*60}")
 
         except KeyboardInterrupt:
