@@ -54,3 +54,10 @@ store/faiss/
 
 # Temporary files
 *.tmp
+
+# Documentation and planning files
+RAG_DEPLOYMENT_PLAN.md
+PROJECT_EVOLUTION.md
+deployment.md
+*deployment*.md
+*evolution*.md

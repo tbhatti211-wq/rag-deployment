@@ -6,8 +6,8 @@ from langchain_community.vectorstores import FAISS
 from langchain.embeddings.base import Embeddings
 from langchain_core.documents import Document
 
-from utils import get_env, sanitize_text
-from general_responses import get_general_response
+from .utils import get_env, sanitize_text
+from .general_responses import get_general_response
 
 load_dotenv()
 STORE_DIR = Path("store/faiss")
