@@ -49,8 +49,8 @@ Thumbs.db
 # Jupyter Notebook
 .ipynb_checkpoints/
 
-# FAISS index (if you want to regenerate locally)
-# store/faiss/
+# FAISS index
+store/faiss/
 
 # Temporary files
 *.tmp
