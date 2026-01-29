@@ -2,6 +2,14 @@
 
 A Retrieval-Augmented Generation (RAG) system for querying documents using semantic search and language models.
 
+## Features
+
+- **Interactive Chat**: Ask multiple questions in one session
+- **Multiple Knowledge Sources**: Machine Learning, Web Development, Data Science, Cloud Computing guides
+- **Smart Search**: Improved embeddings and chunking for better retrieval
+- **Structured Answers**: Clear formatting with source citations
+- **Flexible Models**: Local embeddings with optional OpenAI integration
+
 ## Project Structure
 
 ```
@@ -32,7 +40,13 @@ pip install -r requirements.txt
 
 ## Usage
 
-Query documents:
+### Interactive Mode (Recommended)
+```bash
+python3 src/rag.py
+```
+This starts an interactive chat where you can ask multiple questions. Type 'quit', 'exit', or 'q' to stop, or use Ctrl+C.
+
+### Single Question Mode
 ```bash
 python3 src/rag.py "your question here"
 ```

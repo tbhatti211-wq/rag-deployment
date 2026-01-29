@@ -30,11 +30,13 @@ def load_documents() -> List:
             docs.extend(UnstructuredFileLoader(str(p)).load())
     return docs
 
-def chunk_documents(documents, chunk_size=800, chunk_overlap=120):
+def chunk_documents(documents, chunk_size=1000, chunk_overlap=200):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
-        separators=["\n\n", "\n", " ", ""],
+        separators=["\n## ", "\n### ", "\n\n", "\n", ". ", " ", ""],
+        length_function=len,
+        keep_separator=True
     )
     return splitter.split_documents(documents)
 

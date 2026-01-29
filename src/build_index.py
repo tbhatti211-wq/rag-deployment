@@ -22,8 +22,12 @@ def get_embeddings() -> Embeddings:
     else:
         # LOCAL
         from langchain_community.embeddings import HuggingFaceEmbeddings
-        model = get_env("LOCAL_EMBED_MODEL", "all-MiniLM-L6-v2")
-        return HuggingFaceEmbeddings(model_name=model)
+        model = get_env("LOCAL_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
+        return HuggingFaceEmbeddings(
+            model_name=model,
+            model_kwargs={'device': 'cpu'},
+            encode_kwargs={'normalize_embeddings': True}
+        )
 
 def main():
     docs = load_documents()
