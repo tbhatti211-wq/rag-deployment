@@ -5,6 +5,7 @@ A Retrieval-Augmented Generation (RAG) system for querying documents using seman
 ## Features
 
 - **Interactive Chat**: Ask multiple questions in one session with response history
+- **Documentation Tab**: Built-in API documentation with endpoints, examples, and system info
 - **Modern UI/UX**: Beautiful gradient interface with 30-70 layout (Recent sidebar | Chat panel)
 - **Quick Topic Cards**: 4 clickable cards for instant prompts (ML, Web Dev, Data Science, Cloud)
 - **Health Dashboard**: System status monitoring with dedicated health check page
@@ -21,20 +22,27 @@ A Retrieval-Augmented Generation (RAG) system for querying documents using seman
 
 ```
 ├── src/
-│   ├── build_index.py    # Build FAISS index from documents
-│   ├── ingest.py         # Ingest documents into the system
-│   ├── rag.py            # Main RAG query interface
-│   ├── general_responses.py  # Handle conversational responses
-│   └── utils.py          # Utility functions
+│   ├── build_index.py         # Build FAISS index from documents
+│   ├── ingest.py              # Ingest documents into the system
+│   ├── rag.py                 # Main RAG query interface
+│   ├── general_responses.py    # Handle conversational responses
+│   └── utils.py               # Utility functions
 ├── data/
-│   └── docs/             # Document storage
+│   └── docs/                  # Document storage (markdown guides)
+│       ├── cloud_computing_guide.md
+│       ├── data_science_guide.md
+│       ├── machine_learning_guide.md
+│       └── web_development_guide.md
 ├── store/
-│   └── faiss/            # FAISS index storage
+│   └── faiss/
+│       └── index.faiss        # FAISS vector index for semantic search
 ├── templates/
-│   └── index.html        # Web interface template
-├── app.py                # Flask web API server
-├── deploy.sh             # Production deployment script
-└── requirements.txt      # Python dependencies
+│   ├── index.html             # Main interactive web interface
+│   └── health.html            # Health check dashboard
+├── app.py                     # Flask web API server
+├── deploy.sh                  # Production deployment script
+├── requirements.txt           # Python dependencies
+└── README.md                  # This file
 ```
 
 ## Quick Start
