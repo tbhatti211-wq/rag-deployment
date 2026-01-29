@@ -57,7 +57,7 @@ def health_check():
     return jsonify({
         "status": "healthy",
         "message": "RAG Assistant API is running",
-        "version": "4.0.1",
+        "version": "4.0.2",
         "topics": ["machine learning", "web development", "data science", "cloud computing"]
     })
 
