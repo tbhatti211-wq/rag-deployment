@@ -70,6 +70,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
         .tab-buttons {
             display: flex;
@@ -85,18 +86,25 @@
             gap: 10px;
         }
         .theme-toggle {
-            background: transparent;
-            border: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 18px;
-            padding: 8px 12px;
-            border-radius: 6px;
+            font-size: 14px;
+            padding: 10px 14px;
+            border-radius: 8px;
             transition: all 0.3s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .theme-toggle:hover {
-            background: var(--border-color);
-            color: var(--accent-color);
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
         }
         .tab-btn {
             padding: 12px 20px;
@@ -124,16 +132,34 @@
             flex: 1;
             overflow: hidden;
             display: none;
+            height: 100%;
         }
         .tab-content.active {
             display: flex;
             flex-direction: column;
         }
+        .question-panel {
+            flex-shrink: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            border-bottom: 2px solid var(--border-color);
+        }
         .chat-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            gap: 0;
+        }
+        .recent-response-panel {
             display: grid;
             grid-template-columns: 30% 70%;
-            gap: 20px;
-            height: 100%;
+            gap: 0;
+            flex: 1;
+            overflow: hidden;
+            padding: 0;
+            box-sizing: border-box;
         }
         .docs-content {
             overflow-y: auto;
@@ -326,8 +352,8 @@
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.07);
-            margin-bottom: 20px;
-            flex-shrink: 0;
+            border: 1px solid #e1e8ed;
+            box-sizing: border-box;
         }
         .question-section h2 {
             color: #2c3e50;
@@ -417,10 +443,11 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.07);
             display: none;
             border: 1px solid var(--border-color);
-            flex: 1;
             overflow-y: auto;
             min-height: 0;
             max-height: 100%;
+            box-sizing: border-box;
+            margin-left: 10px;
         }
         .response-section::-webkit-scrollbar {
             width: 8px;
@@ -523,7 +550,10 @@
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
-            border: 2px solid var(--border-color);
+            border: 1px solid #e1e8ed;
+            min-height: 0;
+            max-height: 100%;
+            margin-right: 10px;
         }
         .recent-panel::-webkit-scrollbar {
             width: 6px;
@@ -611,29 +641,6 @@
             font-weight: 500;
             margin-left: 8px;
             display: none;
-        }
-        .chat-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            overflow: hidden;
-            min-height: 0;
-            max-height: 100%;
-            box-sizing: border-box;
-            height: 100%;
-        }
-        .chat-panel::-webkit-scrollbar {
-            width: 8px;
-        }
-        .chat-panel::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .chat-panel::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 5px;
-        }
-        .chat-panel::-webkit-scrollbar-thumb:hover {
-            background: #999;
         }
         .history-item {
             background: #f8f9fa;
@@ -743,22 +750,14 @@
                     <button class="tab-btn active" onclick="switchTab('chat')">💬 Chat</button>
                     <button class="tab-btn" onclick="switchTab('docs')">📖 Documentation</button>
                 </div>
-                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode"><span id="theme-icon">🌙</span> <span id="theme-text">Dark</span></button>
             </div>
 
             <!-- Chat Tab Content -->
             <div id="chat" class="tab-content active">
                 <div class="chat-content">
-                    <div class="recent-panel">
-                        <h3>📚 Recent</h3>
-                        <input type="text" class="search-box" id="search-history" placeholder="🔍 Search questions..." onkeyup="searchHistory()">
-                        <button class="clear-search-btn" onclick="clearSearch()" style="display: none;" id="clear-search-btn">Clear Search</button>
-                        <div class="response-history" id="response-history">
-                            <p style="color: var(--text-muted); font-style: italic; margin: 0;">Your question history will appear here</p>
-                        </div>
-                    </div>
-
-                    <div class="chat-panel">
+                    <!-- Question Panel - Full Width at Top -->
+                    <div class="question-panel">
                         <div class="question-section">
                             <h2>💭 Ask Your Question</h2>
                             <div class="input-group">
@@ -767,6 +766,18 @@
                             <div class="button-group">
                                 <button class="ask-btn" onclick="askQuestion()" id="ask-btn">🚀 Ask Question</button>
                                 <button class="clear-btn" onclick="clearQuestion()">🗑️ Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent & Response Panel - Grid 30% | 70% -->
+                    <div class="recent-response-panel">
+                        <div class="recent-panel">
+                            <h3>📚 Recent</h3>
+                            <input type="text" class="search-box" id="search-history" placeholder="🔍 Search questions..." onkeyup="searchHistory()">
+                            <button class="clear-search-btn" onclick="clearSearch()" style="display: none;" id="clear-search-btn">Clear Search</button>
+                            <div class="response-history" id="response-history">
+                                <p style="color: var(--text-muted); font-style: italic; margin: 0;">Your question history will appear here</p>
                             </div>
                         </div>
 
@@ -918,8 +929,11 @@ curl -X GET http://localhost:8000/health
         }
 
         function updateThemeIcon() {
-            const icon = document.querySelector('.theme-toggle');
-            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            const icon = document.querySelector('#theme-icon');
+            const text = document.querySelector('#theme-text');
+            const isDark = document.body.classList.contains('dark-mode');
+            icon.textContent = isDark ? '☀️' : '🌙';
+            text.textContent = isDark ? 'Light' : 'Dark';
         }
 
         function initializeTheme() {
