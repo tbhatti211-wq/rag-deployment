@@ -5,12 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tech Assistant - Your Knowledge Companion</title>
     <style>
+        :root {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #c3cfe2;
+            --bg-card: white;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --text-muted: #95a5a6;
+            --border-color: #e1e8ed;
+            --accent-color: #667eea;
+            --accent-dark: #764ba2;
+            --success-color: #27ae60;
+        }
+        
+        body.dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #888;
+            --border-color: #3d3d3d;
+            --accent-color: #667eea;
+            --accent-dark: #764ba2;
+            --success-color: #27ae60;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             min-height: 100vh;
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .header {
             display: none;
@@ -47,8 +75,28 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
-            border-bottom: 2px solid #e1e8ed;
+            border-bottom: 2px solid var(--border-color);
             padding-bottom: 0;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tab-buttons-left {
+            display: flex;
+            gap: 10px;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .theme-toggle:hover {
+            background: var(--border-color);
+            color: var(--accent-color);
         }
         .tab-btn {
             padding: 12px 20px;
@@ -473,12 +521,75 @@
             background: #999;
         }
         .recent-panel h3 {
-            color: #2c3e50;
+            color: var(--text-primary);
             margin: 0 0 15px 0;
             font-size: 1em;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid var(--accent-color);
             padding-bottom: 10px;
             font-weight: 500;
+        }
+        .search-box {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: var(--bg-card);
+        }
+        .clear-search-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .clear-search-btn:hover {
+            background: #c0392b;
+        }
+        .export-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .export-btn {
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .export-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+        .export-btn:active {
+            transform: translateY(0);
+        }
+        .copy-feedback {
+            color: var(--success-color);
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+            display: none;
         }
         .chat-panel {
             display: flex;
@@ -605,8 +716,11 @@
 
         <div class="chat-container">
             <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchTab('chat')">💬 Chat</button>
-                <button class="tab-btn" onclick="switchTab('docs')">📖 Documentation</button>
+                <div class="tab-buttons-left">
+                    <button class="tab-btn active" onclick="switchTab('chat')">💬 Chat</button>
+                    <button class="tab-btn" onclick="switchTab('docs')">📖 Documentation</button>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
             </div>
 
             <!-- Chat Tab Content -->
@@ -614,8 +728,10 @@
                 <div class="chat-content">
                     <div class="recent-panel">
                         <h3>📚 Recent</h3>
+                        <input type="text" class="search-box" id="search-history" placeholder="🔍 Search questions..." onkeyup="searchHistory()">
+                        <button class="clear-search-btn" onclick="clearSearch()" style="display: none;" id="clear-search-btn">Clear Search</button>
                         <div class="response-history" id="response-history">
-                            <p style="color: #95a5a6; font-style: italic; margin: 0;">Your question history will appear here</p>
+                            <p style="color: var(--text-muted); font-style: italic; margin: 0;">Your question history will appear here</p>
                         </div>
                     </div>
 
@@ -634,6 +750,12 @@
                         <div class="response-section" id="response-section">
                             <div class="response-header">
                                 <h2>📝 Answer</h2>
+                            </div>
+                            <div class="export-buttons" id="export-buttons" style="display: none;">
+                                <button class="export-btn" onclick="exportAsText()">📄 TXT</button>
+                                <button class="export-btn" onclick="exportAsJSON()">📋 JSON</button>
+                                <button class="export-btn" onclick="copyToClipboard()">📋 Copy</button>
+                                <span class="copy-feedback" id="copy-feedback">Copied!</span>
                             </div>
                             <div id="response-content">
                                 <!-- Response will appear here -->
@@ -763,6 +885,132 @@ curl -X GET http://localhost:8000/health
 
     <script>
         let responseHistory = [];
+        let currentResponse = null;
+
+        // ==================== DARK MODE ====================
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const icon = document.querySelector('.theme-toggle');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        function initializeTheme() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+            }
+            updateThemeIcon();
+        }
+
+        // ==================== SEARCH HISTORY ====================
+        function searchHistory() {
+            const searchTerm = document.getElementById('search-history').value.toLowerCase();
+            const clearBtn = document.getElementById('clear-search-btn');
+            
+            if (searchTerm.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+
+            const historyItems = document.querySelectorAll('.history-item');
+            let hasResults = false;
+
+            historyItems.forEach(item => {
+                const question = item.querySelector('.history-question').textContent.toLowerCase();
+                if (question.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (!hasResults && searchTerm.length > 0) {
+                const noResults = document.createElement('p');
+                noResults.style.cssText = 'color: var(--text-muted); font-style: italic; margin: 10px 0;';
+                noResults.textContent = 'No matching questions found';
+                const historyContainer = document.getElementById('response-history');
+                if (!historyContainer.querySelector('.no-results')) {
+                    noResults.className = 'no-results';
+                    historyContainer.appendChild(noResults);
+                }
+            } else {
+                const noResults = document.querySelector('.no-results');
+                if (noResults) noResults.remove();
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('search-history').value = '';
+            document.getElementById('clear-search-btn').style.display = 'none';
+            searchHistory();
+        }
+
+        // ==================== EXPORT RESPONSES ====================
+        function exportAsText() {
+            if (!currentResponse) {
+                alert('No response to export');
+                return;
+            }
+
+            const text = `
+QUESTION: ${currentResponse.question}
+TYPE: ${currentResponse.questionType}
+DATE: ${new Date().toLocaleString()}
+
+ANSWER:
+${currentResponse.answer}
+
+${currentResponse.sources && currentResponse.sources.length > 0 ? `SOURCES (${currentResponse.sources.length}):
+${currentResponse.sources.map(s => `- ${s.source} (page ${s.page}): ${s.preview}`).join('\n')}` : ''}
+            `.trim();
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `response-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportAsJSON() {
+            if (!currentResponse) {
+                alert('No response to export');
+                return;
+            }
+
+            const json = JSON.stringify(currentResponse, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `response-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function copyToClipboard() {
+            if (!currentResponse) {
+                alert('No response to copy');
+                return;
+            }
+
+            const text = `Q: ${currentResponse.question}\n\nA: ${currentResponse.answer}`;
+            navigator.clipboard.writeText(text).then(() => {
+                const feedback = document.getElementById('copy-feedback');
+                feedback.style.display = 'inline';
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                }, 2000);
+            });
+        }
 
         // Tab Switching Function
         function switchTab(tabName) {
@@ -840,6 +1088,10 @@ curl -X GET http://localhost:8000/health
         function showResponse(question, answer, questionType, sources) {
             const responseSection = document.getElementById('response-section');
             const responseContent = document.getElementById('response-content');
+            const exportButtons = document.getElementById('export-buttons');
+
+            // Store current response for export
+            currentResponse = { question, answer, questionType, sources };
 
             const questionTypeClass = questionType === 'technical' ? 'technical' : 'general';
 
@@ -870,6 +1122,7 @@ curl -X GET http://localhost:8000/health
             }
 
             responseContent.innerHTML = html;
+            exportButtons.style.display = 'flex';
             responseSection.style.display = 'block';
             responseSection.scrollIntoView({ behavior: 'smooth' });
         }
@@ -942,6 +1195,7 @@ curl -X GET http://localhost:8000/health
 
         // Load topics on page load (for future use)
         window.onload = function() {
+            initializeTheme();
             // Could load dynamic topics here if needed
         };
     </script>
