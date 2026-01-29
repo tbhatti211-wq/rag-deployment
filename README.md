@@ -4,7 +4,10 @@ A Retrieval-Augmented Generation (RAG) system for querying documents using seman
 
 ## Features
 
-- **Interactive Chat**: Ask multiple questions in one session
+- **Interactive Chat**: Ask multiple questions in one session with response history
+- **Modern UI/UX**: Beautiful gradient interface with 30-70 layout (Recent sidebar | Chat panel)
+- **Quick Topic Cards**: 4 clickable cards for instant prompts (ML, Web Dev, Data Science, Cloud)
+- **Health Dashboard**: System status monitoring with dedicated health check page
 - **Technical Expertise**: Specialized in machine learning, web development, data science, and cloud computing
 - **Smart Responses**: Handles conversational questions and redirects to technical topics
 - **Rich Knowledge Base**: Comprehensive guides on technology topics
@@ -12,6 +15,7 @@ A Retrieval-Augmented Generation (RAG) system for querying documents using seman
 - **Structured Answers**: Clear formatting with source citations for technical questions
 - **Flexible Models**: Local embeddings with optional OpenAI integration
 - **Web API Service**: Production-ready Flask API with web interface
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
 
 ## Project Structure
 
@@ -89,9 +93,14 @@ Check if the API is running.
 {
   "status": "healthy",
   "timestamp": "2024-01-15T10:30:00Z",
-  "version": "3.0-api"
+  "version": "4.0"
 }
 ```
+
+#### `GET /health-ui`
+View the interactive health check dashboard with system metrics and status.
+
+**Response:** HTML page displaying system health, response times, version, and available topics.
 
 #### `GET /topics`
 Get available topics and examples.
@@ -110,11 +119,23 @@ Get available topics and examples.
 ```
 
 ### Web Interface
-Visit the root URL (`/`) to access the interactive web interface with:
-- Topic overview
-- Question input form
-- Real-time responses
-- Source citations
+Visit the root URL (`/`) to access the modern, interactive web interface with:
+
+**Main Interface** (`/`):
+- Gradient header with system status indicator
+- 4 interactive topic cards for quick selections
+- 30-70 layout: Recent questions sidebar + chat panel
+- Real-time question-answer interface
+- Response history for easy reference
+- Clear button to reset conversation
+- Source citations for transparency
+- Responsive design (desktop & mobile)
+
+**Health Dashboard** (`/health-ui`):
+- System status with color indicators
+- Response time metrics
+- Available topics listing
+- Back button to main interface
 
 ## Question Types
 
