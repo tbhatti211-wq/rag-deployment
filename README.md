@@ -5,9 +5,11 @@ A Retrieval-Augmented Generation (RAG) system for querying documents using seman
 ## Features
 
 - **Interactive Chat**: Ask multiple questions in one session
-- **Multiple Knowledge Sources**: Machine Learning, Web Development, Data Science, Cloud Computing guides
+- **Technical Expertise**: Specialized in machine learning, web development, data science, and cloud computing
+- **Smart Responses**: Handles conversational questions and redirects to technical topics
+- **Rich Knowledge Base**: Comprehensive guides on technology topics
 - **Smart Search**: Improved embeddings and chunking for better retrieval
-- **Structured Answers**: Clear formatting with source citations
+- **Structured Answers**: Clear formatting with source citations for technical questions
 - **Flexible Models**: Local embeddings with optional OpenAI integration
 
 ## Project Structure
@@ -38,18 +40,24 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Usage
+## Question Types
 
-### Interactive Mode (Recommended)
-```bash
-python3 src/rag.py
-```
-This starts an interactive chat where you can ask multiple questions. Type 'quit', 'exit', or 'q' to stop, or use Ctrl+C.
+### ✅ **Technical Questions** (Answered with sources)
+- "What is machine learning?"
+- "How does React work?"
+- "What are cloud computing models?"
+- "Explain data science workflow"
 
-### Single Question Mode
-```bash
-python3 src/rag.py "your question here"
-```
+### 💬 **Conversational Questions**
+- "How are you?" → Friendly response + redirect to technical topics
+- "Hello/Hi" → Greeting + offer help with technical topics
+- "Thank you" → Polite acknowledgment
+
+### 🚫 **General Knowledge Questions**
+- "Where is Paris?"
+- "How to cook pasta?"
+- "What is the capital of France?"
+- **Response**: "I specialize in technical topics... Would you like to ask about ML/web dev/data science/cloud instead?"
 
 ## Notes
 
