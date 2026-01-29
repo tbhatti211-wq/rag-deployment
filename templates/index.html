@@ -327,6 +327,7 @@
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.07);
             margin-bottom: 20px;
+            flex-shrink: 0;
         }
         .question-section h2 {
             color: #2c3e50;
@@ -415,16 +416,11 @@
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.07);
             display: none;
-            flex: 1;
-            min-height: 200px;
-            max-height: 100%;
-            box-sizing: border-box;
-            flex-direction: column;
-            overflow-y: auto;
             border: 1px solid var(--border-color);
-        }
-        .response-section.active {
-            display: flex !important;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            max-height: 100%;
         }
         .response-section::-webkit-scrollbar {
             width: 8px;
@@ -527,6 +523,7 @@
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
+            border: 2px solid var(--border-color);
         }
         .recent-panel::-webkit-scrollbar {
             width: 6px;
@@ -619,9 +616,11 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            overflow-y: auto;
+            overflow: hidden;
             min-height: 0;
+            max-height: 100%;
             box-sizing: border-box;
+            height: 100%;
         }
         .chat-panel::-webkit-scrollbar {
             width: 8px;
@@ -1147,7 +1146,7 @@ ${currentResponse.sources.map(s => `- ${s.source} (page ${s.page}): ${s.preview}
 
             responseContent.innerHTML = html;
             exportButtons.style.display = 'flex';
-            responseSection.classList.add('active');
+            responseSection.style.display = 'block';
             responseSection.scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -1165,7 +1164,7 @@ ${currentResponse.sources.map(s => `- ${s.source} (page ${s.page}): ${s.preview}
             // Show loading state
             btn.disabled = true;
             btn.textContent = '🤔 Thinking...';
-            responseSection.classList.add('active');
+            responseSection.style.display = 'block';
             responseContent.innerHTML = '<div class="loading">🧠 Processing your question...</div>';
 
             try {
