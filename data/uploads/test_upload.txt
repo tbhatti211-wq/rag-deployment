@@ -1,0 +1,32 @@
+# Kubernetes Guide
+
+## What is Kubernetes?
+
+Kubernetes (K8s) is an open-source container orchestration platform that automates the deployment, scaling, and management of containerized applications. It was originally developed by Google and is now maintained by the Cloud Native Computing Foundation (CNCF).
+
+## Key Concepts
+
+### Pods
+Pods are the smallest deployable units in Kubernetes. A pod represents a single instance of a running process in your cluster and can contain one or more containers.
+
+### Services
+Services provide a stable network endpoint to access a set of pods. They enable load balancing and service discovery within the cluster.
+
+### Deployments
+Deployments describe the desired state for your application. Kubernetes will work to maintain that state, creating and destroying pods as needed.
+
+## Benefits of Kubernetes
+
+1. **Scalability**: Automatically scale applications up or down based on demand
+2. **High Availability**: Self-healing capabilities replace failed containers
+3. **Portability**: Run anywhere - on-premises, public cloud, or hybrid
+4. **Resource Efficiency**: Optimize resource utilization across your infrastructure
+
+## Common Commands
+
+- `kubectl get pods` - List all pods
+- `kubectl apply -f deployment.yaml` - Apply a configuration
+- `kubectl scale deployment` - Scale a deployment
+- `kubectl logs <pod-name>` - View logs
+
+This is a comprehensive guide to getting started with Kubernetes orchestration.

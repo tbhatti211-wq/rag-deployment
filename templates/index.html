@@ -750,6 +750,7 @@
                 <div class="tab-buttons-left">
                     <button class="tab-btn active" onclick="switchTab('chat')">💬 Chat</button>
                     <button class="tab-btn" onclick="switchTab('docs')">📖 Documentation</button>
+                    <button class="tab-btn" onclick="switchTab('upload')">📤 Upload</button>
                 </div>
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode"><span id="theme-icon">🌙</span> <span id="theme-text">Dark</span></button>
             </div>
@@ -920,9 +921,127 @@ curl -X GET http://localhost:8000/health
                     </div>
                 </div>
             </div>
+
+            <!-- Upload Tab Content -->
+            <div id="upload" class="tab-content">
+                <div class="docs-content" style="max-width: 800px; margin: 0 auto;">
+                    <h2>📤 Upload Documents</h2>
+                    <p>Upload PDF, TXT, or Markdown files to expand the knowledge base. The documents will be processed and added to the RAG system instantly.</p>
+                    
+                    <div class="docs-section">
+                        <div style="background: var(--bg-surface); padding: 20px; border-radius: 8px; border: 2px dashed var(--border-color);">
+                            <input type="file" id="fileInput" accept=".pdf,.txt,.md,.markdown" style="display: none;" onchange="handleFileSelect(event)">
+                            <button onclick="document.getElementById('fileInput').click()" style="padding: 15px 30px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%;">
+                                📁 Choose File to Upload
+                            </button>
+                            <div id="fileInfo" style="margin-top: 15px; padding: 10px; background: var(--bg-card); border-radius: 6px; display: none;">
+                                <strong>Selected:</strong> <span id="fileName"></span><br>
+                                <strong>Size:</strong> <span id="fileSize"></span>
+                            </div>
+                            <button id="uploadBtn" onclick="uploadDocument()" style="margin-top: 15px; padding: 15px 30px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; display: none;">
+                                ⬆️ Upload & Process
+                            </button>
+                        </div>
+
+                        <div id="uploadStatus" style="margin-top: 20px; padding: 15px; border-radius: 6px; display: none;"></div>
+
+                        <div style="margin-top: 30px; padding: 20px; background: var(--bg-surface); border-radius: 8px; border-left: 4px solid var(--accent-color);">
+                            <h4 style="margin-top: 0;">ℹ️ Supported Formats</h4>
+                            <ul style="margin-bottom: 0;">
+                                <li><strong>PDF</strong> - Portable Document Format</li>
+                                <li><strong>TXT</strong> - Plain text files</li>
+                                <li><strong>MD/Markdown</strong> - Markdown documents</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px; padding: 20px; background: var(--bg-surface); border-radius: 8px;">
+                            <h4 style="margin-top: 0;">🚀 How it Works</h4>
+                            <ol style="margin-bottom: 0; padding-left: 20px;">
+                                <li>Select a document from your computer</li>
+                                <li>Click "Upload & Process" to send it to the server</li>
+                                <li>The system extracts text and creates chunks</li>
+                                <li>Chunks are embedded and added to the vector store</li>
+                                <li>You can immediately ask questions about the content!</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     <script>
+        let selectedFile = null;
+
+        function handleFileSelect(event) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                document.getElementById('fileName').textContent = selectedFile.name;
+                document.getElementById('fileSize').textContent = formatBytes(selectedFile.size);
+                document.getElementById('fileInfo').style.display = 'block';
+                document.getElementById('uploadBtn').style.display = 'block';
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        async function uploadDocument() {
+            if (!selectedFile) {
+                showUploadStatus('error', 'Please select a file first');
+                return;
+            }
+
+            const uploadBtn = document.getElementById('uploadBtn');
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Uploading...';
+            
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showUploadStatus('success', `✅ ${data.message}\n📊 Added ${data.chunks_added} chunks from ${data.total_documents} document(s)`);
+                    // Reset form
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileInfo').style.display = 'none';
+                    document.getElementById('uploadBtn').style.display = 'none';
+                    selectedFile = null;
+                } else {
+                    showUploadStatus('error', `❌ Error: ${data.error || data.message}`);
+                }
+            } catch (error) {
+                showUploadStatus('error', `❌ Upload failed: ${error.message}`);
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '⬆️ Upload & Process';
+            }
+        }
+
+        function showUploadStatus(type, message) {
+            const statusDiv = document.getElementById('uploadStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+            statusDiv.style.border = `1px solid ${type === 'success' ? '#10b981' : '#ef4444'}`;
+            statusDiv.style.color = type === 'success' ? '#10b981' : '#ef4444';
+            statusDiv.textContent = message;
+            statusDiv.style.whiteSpace = 'pre-line';
+        }
+
+        // ==================== EXISTING CODE ====================
         let responseHistory = [];
         let currentResponse = null;
 

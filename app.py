@@ -9,13 +9,16 @@ from flask_cors import CORS
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 
 # Import our RAG components
 from src.rag import get_embeddings, get_llm, is_technical_question
 from src.general_responses import get_general_response
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
-from src.utils import sanitize_text
+from src.utils import sanitize_text, chunk_documents
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_community.document_loaders.unstructured import UnstructuredFileLoader
 
 load_dotenv()
 
@@ -26,6 +29,11 @@ CORS(app)  # Enable CORS for web access
 
 # Global variables for the RAG system
 STORE_DIR = Path("store/faiss")
+UPLOAD_DIR = Path("data/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+ALLOWED_EXTENSIONS = {'pdf', 'txt', 'md', 'markdown'}
+
 embeddings = None
 vs = None
 llm = None
@@ -186,6 +194,80 @@ def get_topics():
             }
         ]
     })
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['POST'])
+def upload_document():
+    """Upload and process a document into the vector store"""
+    global vs, retriever
+    
+    try:
+        # Check if file is in request
+        if 'file' not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({"error": "No file selected"}), 400
+        
+        if not allowed_file(file.filename):
+            return jsonify({
+                "error": f"Invalid file type. Allowed: {', '.join(ALLOWED_EXTENSIONS)}"
+            }), 400
+        
+        # Save file securely
+        filename = secure_filename(file.filename)
+        filepath = UPLOAD_DIR / filename
+        file.save(str(filepath))
+        
+        app.logger.info(f"Processing uploaded file: {filename}")
+        
+        # Load document based on file type
+        ext = filepath.suffix.lower()
+        if ext == '.pdf':
+            loader = PyPDFLoader(str(filepath))
+        elif ext in ['.txt', '.md', '.markdown']:
+            loader = TextLoader(str(filepath), encoding='utf-8')
+        else:
+            loader = UnstructuredFileLoader(str(filepath))
+        
+        documents = loader.load()
+        
+        if not documents:
+            return jsonify({"error": "No content extracted from file"}), 400
+        
+        # Chunk documents
+        chunks = chunk_documents(documents)
+        
+        # Add to vector store
+        vs.add_documents(chunks)
+        
+        # Save updated vector store
+        vs.save_local(str(STORE_DIR))
+        
+        # Reload to ensure consistency across workers
+        initialize_rag()
+        
+        app.logger.info(f"Successfully added {len(chunks)} chunks from {filename}")
+        
+        return jsonify({
+            "status": "success",
+            "message": f"Document '{filename}' processed successfully",
+            "filename": filename,
+            "chunks_added": len(chunks),
+            "total_documents": len(documents)
+        }), 200
+    
+    except Exception as e:
+        app.logger.error(f"Error processing upload: {e}")
+        return jsonify({
+            "error": "Failed to process document",
+            "message": str(e)
+        }), 500
 
 @app.errorhandler(404)
 def not_found(error):

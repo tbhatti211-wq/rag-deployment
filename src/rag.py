@@ -30,7 +30,7 @@ def get_llm():
     backend = get_env("EMBEDDINGS_BACKEND", "LOCAL").upper()
     if backend == "OPENAI":
         from langchain_openai import ChatOpenAI
-        return ChatOpenAI(model="gpt-4o-mini", temperature=0.1, api_key=get_env("OPENAI_API_KEY"))
+        return ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=get_env("OPENAI_API_KEY"))
     else:
         # Simple fallback: use a basic extractive response from sources if no LLM
         # (So LOCAL mode still returns useful text without a heavy model.)
