@@ -61,3 +61,7 @@ PROJECT_EVOLUTION.md
 deployment.md
 *deployment*.md
 *evolution*.md
+server.pid
+server.log
+deploy.log
+*.log
