@@ -1,0 +1,72 @@
+# =============================================================================
+# .dockerignore - Files to exclude when building Docker image
+# =============================================================================
+# Works like .gitignore but for Docker COPY commands
+# Smaller context = faster builds, smaller images
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Python cache and bytecode
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+tests/
+*.pytest_cache
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Logs and runtime files
+*.log
+server.pid
+server.log
+deploy.log
+
+# Development files
+.env.local
+.env.development
+
+# Test documents (don't include in production image)
+test_*.pdf
+test_*.txt
+test_*.md
+create_pdf.py
+
+# User uploaded content (these should be in volumes, not in image)
+data/uploads/*
+!data/uploads/.gitkeep
+
+# Docker files (don't copy Dockerfile into itself!)
+Dockerfile
+.dockerignore
+docker-compose.yml
