@@ -79,7 +79,7 @@ docker run -d -p 8000:8000 --name rag-api \
 | `/topics`| GET    | List available topics                        |
 
 4. Run the Flask API:
-```bash
+```
 export FLASK_APP=app.py
 flask run --host=0.0.0.0 --port=8000
 ```
