@@ -4,14 +4,14 @@ Production-ready Retrieval-Augmented Generation (RAG) system with web interface,
 
 ## Features
 
-- 🚀 **Production-Ready**: Docker + CI/CD + cloud-deployable
-- 💬 **Interactive Web UI**: Modern chat interface with response history
-- 📤 **Document Upload**: PDF, TXT, Markdown support with auto-processing
-- 🔍 **Smart Search**: FAISS vector store with semantic search
-- 🎯 **Technical Focus**: Specialized in ML, web dev, data science, cloud computing
-- 🐳 **Containerized**: Docker image with health checks and auto-scaling ready
-- 🔄 **CI/CD Pipeline**: Automated builds and testing with GitHub Actions
-- 📊 **API & Web**: RESTful endpoints + interactive web interface
+- ✅ **Production-Ready**: Docker + CI/CD + cloud-deployable
+- 💭 **Interactive Chat**: Modern web interface with response history
+- 📄 **Document Upload**: PDF, TXT, Markdown support with auto-processing
+- 🔎 **Smart Search**: Fast semantic search with source citations
+- 🎓 **Technical Knowledge**: ML, web dev, data science, cloud computing
+- 🐳 **Containerized**: Docker image with health checks
+- ⚙️ **Automated Pipeline**: CI/CD with GitHub Actions
+- 🌐 **Dual Interface**: RESTful API + web UI
 
 ## Project Structure
 
@@ -70,14 +70,13 @@ docker run -d -p 8000:8000 --name rag-api \
 ### Local Development
 ```API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Interactive web interface with chat + upload |
-| `/ask` | POST | Query the RAG system `{"question": "..."}` |
-| `/upload` | POST | Upload documents (PDF/TXT/MD) |
-| `/health` | GET | Health check JSON response |
-| `/topics` | GET | List available topics |hon3 -c "from src.build_index import build_faiss_index; build_faiss_index()"
-```
+| Endpoint | Method | Description                                  |
+|----------|--------|----------------------------------------------|
+| `/`      | GET    | Interactive web interface with chat + upload |
+| `/ask`   | POST   | Query the RAG system `{"question": "..."}`   |
+| `/upload`| POST   | Upload documents (PDF/TXT/MD)                |
+| `/health`| GET    | Health check JSON response                   |
+| `/topics`| GET    | List available topics                        |
 
 4. Run the Flask API:
 ```bash
