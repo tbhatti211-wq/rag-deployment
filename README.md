@@ -190,6 +190,7 @@ flask run --host=0.0.0.0 --port=8000
 
 ## Production Deployment
 
+### Local Deployment
 Use the provided deployment script:
 ```bash
 ./deploy.sh
@@ -201,8 +202,123 @@ This will:
 - Build FAISS index (if needed)
 - Start Gunicorn server on port 8000
 
+### Docker Deployment
+
+**Build the image:**
+```bash
+docker build -t rag-assistant:latest .
+```
+
+**Run the container:**
+```bash
+docker run -d -p 8000:8000 \
+  --name rag-api \
+  -e OPENAI_API_KEY=your_key_here \
+  rag-assistant:latest
+```
+
+**With persistent storage (recommended):**
+```bash
+docker run -d -p 8000:8000 \
+  --name rag-api \
+  -e OPENAI_API_KEY=your_key_here \
+  -v $(pwd)/data/uploads:/app/data/uploads \
+  -v $(pwd)/store/faiss:/app/store/faiss \
+  rag-assistant:latest
+```
+
+**View logs:**
+```bash
+docker logs rag-api -f
+```
+
+**Health check:**
+```bash
+curl http://localhost:8000/health
+```
+
+### CI/CD Pipeline
+
+This project uses GitHub Actions for automated builds:
+
+1. **On push to main**: Automatically builds Docker image
+2. **Runs tests**: Validates code quality
+3. **Pushes to Registry**: Image available at `ghcr.io/tbhatti211-wq/rag-deployment:main`
+4. **Versioning**: Tags with commit SHA and semantic versions
+
+**Pull from GitHub Container Registry:**
+```bash
+docker pull ghcr.io/tbhatti211-wq/rag-deployment:main
+```
+
+### Cloud Deployment (AWS ECS)
+
+Coming soon: Automated deployment to AWS ECS Fargate with:
+- Auto-scaling containers
+- Load balancer with public URL
+- Persistent storage with EFS
+- Environment variable management
+- CloudWatch logging
+
+## Document Upload
+
+The system supports uploading custom documents through the web interface:
+
+**Supported Formats:**
+- PDF (`.pdf`)
+- Text (`.txt`)
+- Markdown (`.md`, `.markdown`)
+
+**Upload via UI:**
+1. Click the "📤 Upload" tab
+2. Select or drag-and-drop your file
+3. Document is automatically processed and added to the knowledge base
+4. Immediately queryable through the chat interface
+
+**Upload via API:**
+```bash
+curl -X POST http://localhost:8000/upload \
+  -F "file=@/path/to/document.pdf"
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Document processed successfully",
+  "filename": "document.pdf",
+  "chunks_added": 12,
+  "total_documents": 5
+}
+```
+
+## Testing
+
+Run the test suite:
+```bash
+pytest tests/test_api.py -v
+```
+
+Tests cover:
+- Health endpoint validation
+- Technical question answering
+- General question handling
+- Web interface accessibility
+- Performance benchmarks
+
+## Version History
+
+- **v4.3.0**: Docker containerization + CI/CD pipeline
+- **v4.2.0**: Document upload feature
+- **v4.1.0**: Comprehensive test suite
+- **v3.0-api**: Flask API + web interface
+- **v2.0**: Enhanced RAG with smart responses
+- **v1.0**: Basic CLI RAG implementation
+
 ## Notes
 
 - Virtual environment (`.venv/`) and cache files are excluded from git via `.gitignore`
 - Install dependencies locally; `requirements.txt` defines what's needed
 - The system uses local embeddings (BAAI/bge-small-en-v1.5) for privacy and speed
+- Temperature set to 0 for deterministic responses
+- Multi-worker compatible with automatic vector store reloading
