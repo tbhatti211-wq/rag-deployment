@@ -1,185 +1,82 @@
 # RAG Deployment
 
-A Retrieval-Augmented Generation (RAG) system for querying documents using semantic search and language models.
+Production-ready Retrieval-Augmented Generation (RAG) system with web interface, document upload, and Docker deployment.
 
 ## Features
 
-- **Interactive Chat**: Ask multiple questions in one session with response history
-- **Documentation Tab**: Built-in API documentation with endpoints, examples, and system info
-- **Modern UI/UX**: Beautiful gradient interface with 30-70 layout (Recent sidebar | Chat panel)
-- **Quick Topic Cards**: 4 clickable cards for instant prompts (ML, Web Dev, Data Science, Cloud)
-- **Health Dashboard**: System status monitoring with dedicated health check page
-- **Technical Expertise**: Specialized in machine learning, web development, data science, and cloud computing
-- **Smart Responses**: Handles conversational questions and redirects to technical topics
-- **Rich Knowledge Base**: Comprehensive guides on technology topics
-- **Smart Search**: Improved embeddings and chunking for better retrieval
-- **Structured Answers**: Clear formatting with source citations for technical questions
-- **Flexible Models**: Local embeddings with optional OpenAI integration
-- **Web API Service**: Production-ready Flask API with web interface
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- 🚀 **Production-Ready**: Docker + CI/CD + cloud-deployable
+- 💬 **Interactive Web UI**: Modern chat interface with response history
+- 📤 **Document Upload**: PDF, TXT, Markdown support with auto-processing
+- 🔍 **Smart Search**: FAISS vector store with semantic search
+- 🎯 **Technical Focus**: Specialized in ML, web dev, data science, cloud computing
+- 🐳 **Containerized**: Docker image with health checks and auto-scaling ready
+- 🔄 **CI/CD Pipeline**: Automated builds and testing with GitHub Actions
+- 📊 **API & Web**: RESTful endpoints + interactive web interface
 
 ## Project Structure
 
 ```
+├── .github/
+│   └── workflows/
+│       └── docker-build.yml   # CI/CD pipeline for automated builds
 ├── src/
 │   ├── build_index.py         # Build FAISS index from documents
 │   ├── ingest.py              # Ingest documents into the system
 │   ├── rag.py                 # Main RAG query interface
-│   ├── general_responses.py    # Handle conversational responses
+│   ├── general_responses.py  # Handle conversational responses
 │   └── utils.py               # Utility functions
 ├── data/
-│   └── docs/                  # Document storage (markdown guides)
-│       ├── cloud_computing_guide.md
-│       ├── data_science_guide.md
-│       ├── machine_learning_guide.md
-│       └── web_development_guide.md
+│   ├── docs/                  # Default technical guides
+│   │   ├── cloud_computing_guide.md
+│   │   ├── data_science_guide.md
+│   │   ├── machine_learning_guide.md
+│   │   └── web_development_guide.md
+│   └── uploads/               # User-uploaded documents
 ├── store/
 │   └── faiss/
-│       └── index.faiss        # FAISS vector index for semantic search
+│       ├── index.faiss        # FAISS vector index
+│       └── index.pkl          # Vector store metadata
 ├── templates/
-│   ├── index.html             # Main interactive web interface
+│   ├── index.html             # Main web interface (chat + upload)
 │   └── health.html            # Health check dashboard
+├── tests/
+│   ├── test_api.py            # API endpoint tests
+│   └── requirements.txt       # Test dependencies
 ├── app.py                     # Flask web API server
-├── deploy.sh                  # Production deployment script
+├── deploy.sh                  # Local deployment script
+├── Dockerfile                 # Container build instructions
+├── .dockerignore              # Docker build context exclusions
 ├── requirements.txt           # Python dependencies
+├── PROJECT_EVOLUTION.md       # Project development journey
+├── RAG_DEPLOYMENT_PLAN.md     # Deployment phases and progress
 └── README.md                  # This file
 ```
 
 ## Quick Start
 
-### Option 1: Web Interface (Recommended)
+### Docker (Recommended)
 ```bash
-./deploy.sh
-```
-Then open http://localhost:8000 in your browser.
+# Build and run
+docker build -t rag-assistant:latest .
+docker run -d -p 8000:8000 --name rag-api \
+  -e OPENAI_API_KEY=your_key \
+  -v $(pwd)/data/uploads:/app/data/uploads \
+  -v $(pwd)/store/faiss:/app/store/faiss \
+  rag-assistant:latest
 
-### Option 2: Command Line
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python3 src/rag.py
-```
-
-## Web API Usage
-
-### Endpoints
-
-#### `POST /ask`
-Ask a question to the RAG system.
-
-**Request:**
-```json
-{
-  "question": "What is machine learning?"
-}
+# Access at http://localhost:8000
 ```
 
-**Response:**
-```json
-{
-  "question": "What is machine learning?",
-  "question_type": "technical",
-  "answer": "Machine learning is a subset of artificial intelligence...",
-  "sources": [
-    {
-      "id": 1,
-      "source": "machine_learning_guide.md",
-      "page": 1,
-      "preview": "Machine learning is a method of data analysis..."
-    }
-  ],
-  "source_count": 1
-}
-```
+### Local Development
+```API Endpoints
 
-#### `GET /health`
-Check if the API is running.
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "version": "4.0"
-}
-```
-
-#### `GET /health-ui`
-View the interactive health check dashboard with system metrics and status.
-
-**Response:** HTML page displaying system health, response times, version, and available topics.
-
-#### `GET /topics`
-Get available topics and examples.
-
-**Response:**
-```json
-{
-  "topics": [
-    {
-      "name": "Machine Learning",
-      "description": "AI, algorithms, models, training",
-      "examples": ["What is supervised learning?"]
-    }
-  ]
-}
-```
-
-### Web Interface
-Visit the root URL (`/`) to access the modern, interactive web interface with:
-
-**Main Interface** (`/`):
-- Gradient header with system status indicator
-- 4 interactive topic cards for quick selections
-- 30-70 layout: Recent questions sidebar + chat panel
-- Real-time question-answer interface
-- Response history for easy reference
-- Clear button to reset conversation
-- Source citations for transparency
-- Responsive design (desktop & mobile)
-
-**Health Dashboard** (`/health-ui`):
-- System status with color indicators
-- Response time metrics
-- Available topics listing
-- Back button to main interface
-
-## Question Types
-
-### ✅ **Technical Questions** (Answered with sources)
-- "What is machine learning?"
-- "How does React work?"
-- "What are cloud computing models?"
-- "Explain data science workflow"
-
-### 💬 **Conversational Questions**
-- "How are you?" → Friendly response + redirect to technical topics
-- "Hello/Hi" → Greeting + offer help with technical topics
-- "Thank you" → Polite acknowledgment
-
-### 🚫 **General Knowledge Questions**
-- "Where is Paris?"
-- "How to cook pasta?"
-- "What is the capital of France?"
-- **Response**: "I specialize in technical topics... Would you like to ask about ML/web dev/data science/cloud instead?"
-
-## Development Setup
-
-1. Create a virtual environment:
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Build the FAISS index (if not exists):
-```bash
-python3 -c "from src.build_index import build_faiss_index; build_faiss_index()"
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Interactive web interface with chat + upload |
+| `/ask` | POST | Query the RAG system `{"question": "..."}` |
+| `/upload` | POST | Upload documents (PDF/TXT/MD) |
+| `/health` | GET | Health check JSON response |
+| `/topics` | GET | List available topics |hon3 -c "from src.build_index import build_faiss_index; build_faiss_index()"
 ```
 
 4. Run the Flask API:
@@ -305,20 +202,67 @@ Tests cover:
 - General question handling
 - Web interface accessibility
 - Performance benchmarks
+Deployment
 
-## Version History
+### Docker Commands
+```bash
+# Build
+docker build -t rag-assistant:latest .
 
-- **v4.3.0**: Docker containerization + CI/CD pipeline
-- **v4.2.0**: Document upload feature
-- **v4.1.0**: Comprehensive test suite
-- **v3.0-api**: Flask API + web interface
-- **v2.0**: Enhanced RAG with smart responses
-- **v1.0**: Basic CLI RAG implementation
+# Run (ephemeral storage)
+docker run -d -p 8000:8000 --name rag-api \
+  -e OPENAI_API_KEY=your_key \
+  rag-assistant:latest
 
-## Notes
+# Run (persistent storage - recommended)
+docker run -d -p 8000:8000 --name rag-api \
+  -e OPENAI_API_KEY=your_key \
+  -v $(pwd)/data/uploads:/app/data/uploads \
+  -v $(pwd)/store/faiss:/app/store/faiss \
+  rag-assistant:latest
 
-- Virtual environment (`.venv/`) and cache files are excluded from git via `.gitignore`
-- Install dependencies locally; `requirements.txt` defines what's needed
-- The system uses local embeddings (BAAI/bge-small-en-v1.5) for privacy and speed
-- Temperature set to 0 for deterministic responses
-- Multi-worker compatible with automatic vector store reloading
+# Logs & health
+docker logs rag-api -f
+curl http://localhost:8000/health
+```
+
+### CI/CD Pipeline
+- **GitHub Actions**: Auto-builds on push to main
+- **Container Registry**: `ghcr.io/tbhatti211-wq/rag-deployment:main`
+- **Automated Testing**: Pre-deployment validation
+
+### Cloud Deployment
+Supports deployment to:
+- AWS ECS Fargate (recommended)
+- Railway / Render
+- Any Docker-compatible platform**Supported Formats**: PDF, TXT, Markdown
+
+**Via Web UI**: Click "📤 Upload" tab → drag-and-drop file  
+**Via API**:
+```bash
+curl -X POST http://localhost:8000/upload -F "file=@document.pdf"
+```
+
+Documents are automatically chunked, embedded, and immediately queryable.
+
+## Technology Stack
+
+- **Backend**: Python 3.12, Flask 3.0.3, Gunicorn 22.0.0
+- **AI/ML**: LangChain 0.2.16, OpenAI GPT-4o-mini, FAISS vector store
+- **Embeddings**: BAAI/bge-small-en-v1.5 (local) or OpenAI
+- **DevOps**: Docker, GitHub Actions, AWS ECS ready
+- **Testing**: pytest with API integration tests
+
+## Documentation
+
+- **[PROJECT_EVOLUTION.md](PROJECT_EVOLUTION.md)**: Development journey from CLI to production
+- **[RAG_DEPLOYMENT_PLAN.md](RAG_DEPLOYMENT_PLAN.md)**: Deployment phases and architecture
+
+## Version
+
+**Current**: v4.3.0 (Docker + CI/CD)  
+**Previous**: v4.2.0 (Upload), v4.1.0 (Tests), v3.0 (API), v2.0 (Smart), v1.0 (CLI)
+
+## License
+
+MIT
